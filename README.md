@@ -48,3 +48,7 @@ With both plugins installed, `writing-pr-descriptions` drafts the handoff commen
 Only for the iOS and Android clients: both skills read `HOW-IT-WORKS.md` from the repo root and stop if it isn't there. Enable it in those repos' `.claude/settings.json` (`"enabledPlugins": {"client-contract@blackout": true}`) rather than for every repo.
 
 The source of truth is now this repo; the copies in `android/.claude/skills/` and `ios/.claude/skills/` are still there and will drift until they're removed.
+
+## Changing a plugin
+
+Bump `version` in the plugin's `.claude-plugin/plugin.json` whenever you change its files. Installed copies only refresh when the version changes; otherwise `/plugin marketplace update` leaves everyone on the old skills.

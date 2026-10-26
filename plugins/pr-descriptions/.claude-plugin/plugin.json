@@ -1,5 +1,5 @@
 {
   "name": "pr-descriptions",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Write and back-fill PR descriptions (feature/fix and release) in the team's house style, with a stack-aware Scope generator."
 }
