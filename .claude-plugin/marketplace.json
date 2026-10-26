@@ -1,11 +1,24 @@
 {
   "name": "blackout",
-  "owner": { "name": "Blackout Technologies engineering" },
+  "owner": {
+    "name": "Blackout Technologies engineering"
+  },
   "plugins": [
     {
       "name": "pr-descriptions",
       "source": "./plugins/pr-descriptions",
       "description": "Write and back-fill PR descriptions (feature/fix and release) in the team's house style."
+    },
+    {
+      "name": "client-contract",
+      "source": "./plugins/client-contract",
+      "description": "Check Blackout iOS/Android client changes and codebases against the HOW-IT-WORKS.md product contract."
+    },
+    {
+      "name": "jira-tickets",
+      "source": "./plugins/jira-tickets",
+      "description": "Write BDM Jira tickets the product owner and manual tester can follow, and QA handoff comments when a PR is opened."
     }
-  ]
+  ],
+  "description": "Shared Claude Code plugins for Blackout engineering."
 }

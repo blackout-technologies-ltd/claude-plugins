@@ -1,0 +1,5 @@
+{
+  "name": "client-contract",
+  "version": "0.1.0",
+  "description": "Check Blackout iOS/Android client changes and codebases against the HOW-IT-WORKS.md product contract."
+}

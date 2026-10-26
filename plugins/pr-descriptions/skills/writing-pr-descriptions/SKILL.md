@@ -59,6 +59,10 @@ Title: `BDM-1234: <what users/the system now do>` in plain words, not the branch
 - **Production vs tests stay separate** in Scope and Verified; test lines never inflate the production size.
 - **Back-filling an existing PR:** keep correct facts from the current body, fix wrong ones (and say so to the user). Show the draft and get the user's OK before `gh pr edit <n> --body-file <file>`; never overwrite a body unseen.
 
+## QA handoff
+
+If the PR has a `BDM-…` ticket and the `jira-tickets:writing-qa-handoff` skill is available, draft that Jira comment from the same Risk and Verified facts and present it with the PR description for one approval.
+
 ## Example
 
 github.com/blackout-technologies-ltd/employee-client-android-java/pull/604 is the reference shape.

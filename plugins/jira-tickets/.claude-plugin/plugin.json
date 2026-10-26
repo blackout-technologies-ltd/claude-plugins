@@ -1,0 +1,5 @@
+{
+  "name": "jira-tickets",
+  "version": "0.1.0",
+  "description": "Write BDM Jira tickets the product owner and manual tester can follow, and QA handoff comments when a PR is opened."
+}

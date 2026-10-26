@@ -62,6 +62,15 @@ Merges `develop` into `master` for the next production release. Built since #<pr
 - **<Dashboard, alert or Crashlytics issue>:** what should rise, fall or clear, and which PR it proves.
 ```
 
+## Fix Version (iOS and Android releases)
+
+Each app release gets a Jira Fix Version so tickets show which release carries them. Backend and other repos skip this.
+
+1. Name: `<version> Mobile App - iOS` or `<version> Mobile App - Android` (the existing BDM convention), with the version from `MARKETING_VERSION` in `project.pbxproj` or `VERSION_CODE` in `version.properties` at HEAD.
+2. Tickets: the `BDM-…` key from each included PR's branch or title (the PR's own ticket only). Skip a ticket whose work is split across PRs (`gh search prs "<KEY>" --owner blackout-technologies-ltd`) that are not all in this release, and say so.
+3. In the draft shown to the user, **not** in the PR body: the version name, whether it exists yet, and the tickets to tag, with their current Fix Versions (JQL `key in (…) AND fixVersion is not EMPTY`; a plain search may not return the field).
+4. On the user's OK: find the version (`getJiraProjectVersions`, a read; compare trimmed names, one old version has a trailing space); create it unreleased if missing (`manageJiraProjectVersion` with `action: create`, which the Atlassian MCP runs as a destructive-tier call); **add** it to each ticket's Fix Versions, keeping any already there. If your Jira tool can't create versions (permissions), give the list to a Jira admin. Mark the version released only when the user says the store release has gone out.
+
 ## Rules
 
 - **Link PRs, never ticket keys.** Jira auto-transitions any `BDM-…` key in a PR body; a release PR would drag every included ticket back to "IN PR". The included PRs carry the keys.
