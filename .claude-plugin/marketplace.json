@@ -1,0 +1,11 @@
+{
+  "name": "blackout",
+  "owner": { "name": "Blackout Technologies engineering" },
+  "plugins": [
+    {
+      "name": "pr-descriptions",
+      "source": "./plugins/pr-descriptions",
+      "description": "Write and back-fill PR descriptions (feature/fix and release) in the team's house style."
+    }
+  ]
+}
