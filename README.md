@@ -7,6 +7,8 @@ Shared skills for the engineering team.
 ```
 /plugin marketplace add blackout-technologies-ltd/claude-plugins
 /plugin install pr-descriptions@blackout
+/plugin install jira-tickets@blackout
+/plugin install client-contract@blackout  # Mobile only, for architectural reviews, etc
 ```
 
 Update later with `/plugin marketplace update blackout`.
