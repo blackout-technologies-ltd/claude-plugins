@@ -15,6 +15,7 @@ A PR description tells a reviewer **why** the change exists, **how big** it real
 2. Diff and history: `gh pr view <n>` / `gh pr diff <n>` (back-fill) or `git diff origin/develop...HEAD` + `git log` (new PR). Read the existing body, commit messages and review comments: verification claims come from there.
 3. Scope: run `bash <plugin root>/scripts/pr-scope.sh [base]` (the plugin root is two directories above this skill's base directory) from inside the repo (default base `origin/develop`; it detects Android, Laravel, iOS, Go, dbt and Terraform). Paste its output, then replace the `<!-- goal -->` and empty "Where to look" placeholders. For a merged PR, run it in a temporary `git worktree add --detach <dir> <headRefOid>` with base `<baseRefOid>` (from `gh pr view <n> --json headRefOid,baseRefOid`), then remove the worktree.
 4. Risks: check the stack's items in `stack-risks.md` (same directory as this file).
+5. Product contract: if the repo root has `HOW-IT-WORKS.md` (the Blackout mobile clients), read it and find the guarantees the diff bears on. `.claude/blackout-behaviour-map.md`, when present, maps code paths to guarantees under "What a change puts at risk".
 
 ## The description
 
@@ -38,6 +39,7 @@ Fill in every section, in this order. A section with nothing to say gets a one-l
 
 ## Risk
 - What could behave differently in prod and for whom. Migrations, permissions, config/env, dependency or manifest/entitlement changes (from stack-risks.md). How existing data/devices are repaired.
+- Mobile clients only (`HOW-IT-WORKS.md` present): **Contract:** quote each guarantee the change touches and say in a few words why it still holds. "Contract: none touched" is a valid answer.
 - "None: refactor only" is a valid answer when true.
 
 ## Verified
