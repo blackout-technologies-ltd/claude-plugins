@@ -25,8 +25,9 @@ Run from the backend repo. Nothing here changes anything.
 REPO=blackout-technologies-ltd/backend-web-laravel
 git fetch origin master develop --tags
 PREV=$(gh release view --repo $REPO --json tagName --jq .tagName)   # latest release
-git log --oneline "$PREV"..origin/master | head                     # empty → nothing to release, stop
-git merge-base --is-ancestor origin/master origin/develop && echo "STOP: master is inside develop"
+SHA=$(git rev-parse origin/master)                                   # the commit this release will be
+git log --oneline "$PREV".."$SHA" | wc -l                            # 0 → nothing to release, stop
+if git merge-base --is-ancestor "$SHA" origin/develop; then echo "STOP: master is inside develop"; fi
 gh pr list --repo $REPO --base master --state open --json number,title
 ```
 
@@ -43,7 +44,7 @@ TAG="v$(TZ=Europe/London date +%y.%m.%d | cut -c2-)"   # 16 Nov 2026 → v6.11.1
 git tag --list "$TAG*"
 ```
 
-If `$TAG` already exists (second release that day), append a digit: `v6.10.05` → `v6.10.051`, then `…052`.
+If that prints `$TAG`, it is taken (second release that day): append a digit and set it yourself, `TAG=v6.10.051`, then `…052`, checking each with `git tag --list` until one is free. This is the existing convention; do not use `v6.10.05.1`.
 
 ## 3. Preview the GitHub notes
 
@@ -51,14 +52,14 @@ This call creates nothing:
 
 ```bash
 gh api repos/$REPO/releases/generate-notes -f tag_name="$TAG" \
-  -f target_commitish=master -f previous_tag_name="$PREV" --jq .body
+  -f target_commitish="$SHA" -f previous_tag_name="$PREV" --jq .body
 ```
 
 This list is both the GitHub release body and the source for the Slack notes.
 
 ## 4. Draft the Slack notes
 
-Work from the PR titles in the preview. Where a title does not tell you what a customer would notice, read the PR (`gh pr view <n> --json title,body`); do not guess.
+Work from the PR titles in the preview. Where a title does not tell you what a customer would notice, read the PR (`gh pr view <n> --json title,body`); do not guess. Read those bodies whole: the line that matters ("no feature flag", "admins lose edit access") is often far down.
 
 Shape (standard Markdown; the Slack tool converts it). Leave out a section with nothing in it:
 
@@ -68,18 +69,28 @@ Shape (standard Markdown; the Slack tool converts it). Leave out a section with 
 **New for admins**
 - **<Short name>:** <what they can now do, one sentence>
 
-**A fresher dashboard**            ← pages moved to the new design, as one short paragraph
+**A fresher dashboard**
+<One short paragraph: the pages moved to the new design, and which are on for everyone or one organisation at a time.>
+
 **Improvements and fixes**
+- **<Short name>:** <one sentence>
+
 **Privacy and security**
+- **<Short name>:** <one sentence>
+
+**For Blackout staff**
+- **<Short name>:** <Apex and other internal-only changes, one sentence>
+
 **Heads-up: things we've changed or retired**
+- **<Short name>:** <what changed, who it affects, what they need to do>
 ```
 
 - **One sentence per item, about what the reader sees or can do**, in the words on the screen ("Wi-Fi networks", "check-ins"), not the code's ("Svelte", "queue", "endpoint", "job").
 - **No ticket keys, PR numbers, author names or links.**
 - **Leave out** what no customer or colleague would notice: dependency and framework updates, CI, build, refactors, removed dead code, merge-backs. Security patches become one line: "The latest security updates have been applied."
-- **Leave out a fix for something introduced in this same release.** Nobody outside the team saw it broken.
+- **Leave out a fix for something introduced in this same release,** and the problem it fixed. Nobody outside the team saw it broken. Before writing a heads-up from one PR, check that no later PR in the list withdrew it.
 - **Say when something is not for everyone:** behind a feature flag, rolled out one organisation at a time, or Apex/super-admin only.
-- **Heads-up items need a fact, not a guess.** For anything retired, removed or newly restricted, the reader's question is "does this affect my customers?". If the PR does not answer it, put the question to the user in the approval step and write the line from their answer ("This hasn't been used in a long time, so no action is needed").
+- **Heads-up items need a fact, not a guess.** For anything retired, removed or newly restricted, the reader's question is "does this affect my customers?". Where the PR states it (usage figures, "all customers already on X"), write the line from that. Where it does not, put the question to the user in the approval step and write the line from their answer ("This hasn't been used in a long time, so no action is needed").
 - **No customer or personal data** (school or organisation names, people, emails).
 - Under 5000 characters (the Slack tool's limit per message).
 
@@ -87,20 +98,22 @@ Shape (standard Markdown; the Slack tool converts it). Leave out a section with 
 
 Show the user, in one message:
 
-1. The tag, the commit it will point at (`git log -1 --format='%h %s' origin/master`) and the previous tag.
+1. The tag, the commit it will point at (`git log -1 --format='%h %s' "$SHA"`) and the previous tag.
 2. The number of PRs included, and that publishing **starts the production deploy**.
 3. The Slack draft in full, and the channel.
-4. Any heads-up questions from step 4.
+4. Any questions from step 4, and anything else you could not establish (for example a feature that depends on another release being live).
 
 Wait for a yes. An earlier "do the release" is not approval of a draft they have not seen.
 
 ## 6. Publish, then post
 
 ```bash
-gh release create "$TAG" --repo $REPO --target master --title "$TAG" \
+gh release create "$TAG" --repo $REPO --target "$SHA" --title "$TAG" \
   --generate-notes --notes-start-tag "$PREV"
 gh run list --repo $REPO --workflow aws_prod.yml --limit 1 --json url,status --jq '.[0]'
 ```
+
+`$SHA` is the commit the user approved; never swap it for `master`, which may have moved.
 
 Then post the approved draft to `#product-dashboard` with your Slack tool (no Slack tool: print it for pasting). Post once the release is published; the notes say what is in the release, not that the deploy has finished.
 

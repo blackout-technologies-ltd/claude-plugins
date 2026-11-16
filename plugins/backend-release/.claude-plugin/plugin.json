@@ -1,5 +1,5 @@
 {
   "name": "backend-release",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Cut a production release of the Laravel backend: date-based tag, GitHub release notes and plain-language release notes for Slack."
 }
