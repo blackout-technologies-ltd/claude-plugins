@@ -51,6 +51,14 @@ Only for the iOS and Android clients: both skills read `HOW-IT-WORKS.md` from th
 
 The source of truth is now this repo; the copies in `android/.claude/skills/` and `ios/.claude/skills/` are still there and will drift until they're removed.
 
+## backend-release
+
+| Skill | Use it for |
+|---|---|
+| `releasing-backend-to-production` | Cutting a backend release from master: date-based tag (`vY.MM.DD`, Y = last digit of the year), GitHub release with generated notes, and plain-language release notes posted to `#product-dashboard` |
+
+Publishing the GitHub release is what deploys production, so the skill drafts everything and asks once before it publishes. Install with `/plugin install backend-release@blackout`.
+
 ## Changing a plugin
 
 Bump `version` in the plugin's `.claude-plugin/plugin.json` whenever you change its files. Installed copies only refresh when the version changes; otherwise `/plugin marketplace update` leaves everyone on the old skills.

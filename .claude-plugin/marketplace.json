@@ -18,6 +18,11 @@
       "name": "jira-tickets",
       "source": "./plugins/jira-tickets",
       "description": "Write BDM Jira tickets the product owner and manual tester can follow, and QA handoff comments when a PR is opened."
+    },
+    {
+      "name": "backend-release",
+      "source": "./plugins/backend-release",
+      "description": "Cut a production release of the Laravel backend: date-based tag, GitHub release notes and plain-language release notes for Slack."
     }
   ],
   "description": "Shared Claude Code plugins for Blackout engineering."
